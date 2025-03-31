@@ -1,75 +1,74 @@
-import React from 'react'
-import { Card } from "@chakra-ui/react"
-import { Flex } from "@chakra-ui/react"
-import Navbar from '../component/Navbar'
-import Footer from '../component/Footer'
-
-import Imageoftracker from "../assets/SmartTracker.png"
-import { useState } from 'react'
+import React, { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase";
+import { Button, Flex, Box } from "@chakra-ui/react";
+import Footer from "@/component/Footer";
+import Navbar from "@/component/Navbar";
 import { useNavigate } from "react-router-dom";
-import { Button } from '@chakra-ui/react'
+import tracker from '../assets/SmartTracker.png';
 
-export default function Login() {
-    const [email, setEmail] = useState("");
+const Login = () => {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in successfully!");
-      // Redirect or update state as needed
       navigate("/home");
     } catch (err) {
       setError(err.message);
     }
   };
+
   return (
-    <div>
-       <div>
+    <Box minHeight="100vh" display="flex" flexDirection="column" overflow="hidden">
       <Navbar />
-      <Flex>
-        <div>
-        <img src={Imageoftracker} alt="photo" />
-        </div>
+      <Flex flex="1" direction={{ base: 'column', md: 'row' }}>
+        {/* Left Section with Image */}
+        <Box flex="1" display={{ base: 'none', md: 'block' }}>
+          <img src={tracker} alt="photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </Box>
 
-        
-        <Card.Root width="400px" height="300px" margin="80px" bg='skyblue' marginRight="60px" >
-      <h2 style={{textAlign:'center'}}><u>Login</u></h2>
-      
-      <form onSubmit={handleLogin}>
-        <div style={{padding:'35px'}}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-       </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <Flex justifyContent="flex-end" padding='10px' margin='10px'>
-  <Button type="submit" bg="pink">Login</Button>
-</Flex>
-
-        </div>
-      </form>
-      </Card.Root>
+        {/* Right Section with Login Form */}
+        <Flex flex="1" justifyContent="center" alignItems="center" bg="#f0f4f8" p={{ base: 4, md: 8 }}>
+          <Box width={{ base: '90%', sm: '400px' }} padding="30px" borderRadius="10px" boxShadow="0 4px 8px rgba(0,0,0,0.1)" backgroundColor="white">
+            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}><u>Login</u></h2>
+            <form onSubmit={handleLogin}>
+              <div>
+                <label>Email:</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  style={{ width: '100%', padding: '10px', margin: '8px 0', borderRadius: '5px', border: '1px solid #ccc' }}
+                />
+              </div>
+              <div>
+                <label>Password:</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  style={{ width: '100%', padding: '10px', margin: '8px 0', borderRadius: '5px', border: '1px solid #ccc' }}
+                />
+              </div>
+              {error && <p style={{ color: "red" }}>{error}</p>}
+              <Flex justifyContent="flex-end" mt={4}>
+                <Button type="submit" bg="pink" _hover={{ bg: 'hotpink' }}>Login</Button>
+              </Flex>
+            </form>
+          </Box>
+        </Flex>
       </Flex>
       <Footer />
-    </div>
-    </div>
-  )
-}
+    </Box>
+  );
+};
+
+export default Login;

@@ -7,6 +7,7 @@ import Login from './pages.jsx/Login'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './pages.jsx/Home'
 import About from './About'
+import LoginTracker from './pages.jsx/LoginTracker'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -22,6 +23,7 @@ function App() {
      <Route path="/home" element={<Home />} />
       <Route path="/" element={<Login />} />
      <Route path="/about" element={<About />} />
+     {/* <Route path="/LoginTracker" element={<LoginTracker />} /> */}
     
      
      
