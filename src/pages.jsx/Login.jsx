@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase";
+// import { auth } from "@/firebase";
+import { auth } from "../firebase";
 import { Button, Flex, Box } from "@chakra-ui/react";
-import Footer from "@/component/Footer";
-import Navbar from "@/component/Navbar";
+//import Footer from "@/component/Footer";
+//import Navbar from "@/component/Navbar";
 import { useNavigate } from "react-router-dom";
 import tracker from '../assets/SmartTracker.png';
+import Footer from "../component/Footer";
+import Navbar from "../component/Navbar";
 
 const Login = () => {
   const [email, setEmail] = useState("");

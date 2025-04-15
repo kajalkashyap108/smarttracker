@@ -1,4 +1,6 @@
-// Import required Firebase services
+
+  
+  // Import required Firebase services
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
