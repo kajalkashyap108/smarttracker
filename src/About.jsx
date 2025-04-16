@@ -9,31 +9,24 @@ export default function About() {
       <div style={{ display: 'flex', gap:'20px', margin:'20px 0px 20px 50px' }}>
       <div>
         <div>
-        <Card.Root width="270px">
-        <img src={flowerimg} alt="flower" style={{ height: "150px", width: "270px" }} />
-
-
-      
+        <Card.Root style={{ width: "270px", borderRadius: "16px" }}>
+        <img src={flowerimg} alt="flower" style={{ height: "150px", width: "270px",  borderRadius:"16px" }} />
     </Card.Root>
         </div>
-        <div style={{margin:'25px 15px '}}>
-        <Box background="tomato" width="270px" padding="4" color="white">
+        <div style={{margin:'25px 15px'}}>
+        <Box background='orange' width="270px" padding="4" color="white" borderRadius='16px' >
       This is the Box
     </Box>
         </div>
         <div >
-        <Card.Root width="320px">
+        <Card.Root style={{ width: "270px", borderRadius: "16px" }}>
       <Card.Body gap="2">
         <Avatar.Root size="lg" shape="rounded">
           <Avatar.Image src="https://picsum.photos/200/300" />
           <Avatar.Fallback name="Nue Camp" />
         </Avatar.Root>
         <Card.Title mt="2">Nue Camp</Card.Title>
-        <Card.Description>
-          This is the card body. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Curabitur nec odio vel dui euismod fermentum.
-          Curabitur nec odio vel dui euismod fermentum.
-        </Card.Description>
+       
       </Card.Body>
       <Card.Footer justifyContent="flex-end">
         <Button variant="outline">View</Button>
@@ -46,19 +39,19 @@ export default function About() {
        {/* column2 */}
         <div>
          <Stack spacing={4}>
-          <Box background="orange" width="100%" padding="4" color="white">
+          <Box background="orange" width="100%" padding="4" color="white" borderRadius='16px'>
            This is the Box
           </Box>
-          <Box background="black" width="100%" padding="4" color="white">
+          <Box background="black" width="100%" padding="4" color="white" borderRadius='16px'>
            This is the Box
           </Box>
-          <Box background="skyblue" width="100%" padding="4" color="white">
+          <Box background="skyblue" width="100%" padding="4" color="white" borderRadius='16px'>
            This is the Box
           </Box>
           </Stack> 
           <div style={{margin:'20px'}}>
-          <Card.Root width="320px">
-           <img src={kitchen}/>
+          <Card.Root style={{ width: "200px", height:'220px', borderRadius: "16px", overflow: "hidden" }}>
+           <img src={kitchen} style={{height:'220px'}}/>
       
     </Card.Root>
           </div>
