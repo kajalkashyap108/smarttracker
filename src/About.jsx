@@ -6,7 +6,7 @@ import kitchen from '../src/assets/kitchendesign.png'
 export default function About() {
   return (
     <div style={{height:'100vh'}}>
-       <Card.Root style={{width:'70%', margin: '3% 50% 30% 20%', backgroundColor:'pink'}}>
+       <Card.Root style={{width:'70%', margin: '3% 50% 30% 20%', backgroundColor:'paleGreen'}}>
            
       
    
