@@ -1,0 +1,131 @@
+/* Top bar */
+.navbar-top {
+    background-color: #3182CE;
+    color: white;
+    padding: 16px 24px; /* Increased vertical and horizontal padding */
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; 
+  }
+  
+  
+  .navbar-brand {
+    margin: 0;
+    font-size: 24px;
+    text-align: center;
+    flex: 1; /* Take full width to allow centering */
+  }
+  @media (min-width: 769px) {
+    .navbar-brand {
+      display: none;
+    }
+  }
+  
+  /* Menu button (hamburger) */
+  .navbar-menu-button {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  /* Sidebar */
+  .navbar-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    background-color: #f7fafc;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+  
+    display: flex;
+    flex-direction: column;
+  
+    transform: translateX(0); /* Always visible on desktop */
+  }
+  
+  /* Sidebar header */
+  .sidebar-header {
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  /* Sidebar menu */
+  .navbar-menu {
+    list-style: none;
+    padding: 20px;
+    margin: 0;
+    flex: 1;
+  }
+  
+  .navbar-menu li {
+    margin-bottom: 10px;
+  }
+  
+  .navbar-menu button {
+    background: none;
+    border: none;
+    color: #2d3748;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+  }
+  
+  .navbar-menu button:hover {
+    background-color: #e2e8f0;
+  }
+  
+  /* Sidebar footer */
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .sidebar-footer button {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #e53e3e;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .sidebar-footer button:hover {
+    background-color: #fed7d7;
+  }
+  
+  /* Responsive: mobile view */
+  @media (max-width: 768px) {
+    .navbar-menu-button {
+      display: block;
+    }
+  
+    .navbar-sidebar {
+      transform: translateX(-100%);
+    }
+  
+    .navbar-sidebar.open {
+      transform: translateX(0);
+    }
+  }
+  

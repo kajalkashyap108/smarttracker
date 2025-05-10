@@ -1,30 +1,26 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import Navbar from './component/Navbar'
-import Login from './pages.jsx/Login'
+import Login from './pages/Login'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Home from './pages.jsx/Home'
-import About from './About'
-import LoginTracker from './pages.jsx/LoginTracker'
-//import kuch from './pages.jsx/Kuch'
-import Kuch from './pages.jsx/Kuch'
+import Home from './pages/Home'
+import Tasks from "./pages/Tasks"
+import Habits from './pages/Habits'
+import Expenses from "./pages/Expenses"
+
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-    {/* <Navbar />
-     <Login />
-         */}
+
 
 <Router>
      <Routes>
      <Route path="/home" element={<Home />} />
       <Route path="/" element={<Login />} />
-     <Route path="/about" element={<About />} />
-     <Route path="/kuch" element={<Kuch />} />
+      <Route path="/tasks" element={<Tasks />} />
+      <Route path="/habits" element={<Habits />} />
+      <Route path="/expenses" element={<Expenses />} />
      {/* <Route path="/LoginTracker" element={<LoginTracker />} /> */}
     
      
