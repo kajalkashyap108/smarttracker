@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
-import { collection, getDocs, query, limit, addDoc, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, getDocs, query, limit, addDoc, doc, setDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { Pie, Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import Stopwatch from "../component/Stopwatch";
-import './Home.css';
+import LoadingSpinner from "../component/LoadingSpinner";
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -178,8 +178,23 @@ const Home = () => {
     }
   };
 
-  const removeStopwatch = (id) => {
-    setStopwatches(stopwatches.filter((sw) => sw.id !== id));
+  const removeStopwatch = async (id) => {
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Please log in to remove a stopwatch.");
+      return;
+    }
+  
+    try {
+      const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+      const stopwatchRef = doc(db, `users/${user.uid}/days/${date}/stopwatches`, id);
+      await deleteDoc(stopwatchRef);
+      console.log(`Stopwatch ${id} deleted from Firestore`);
+      setStopwatches(stopwatches.filter((sw) => sw.id !== id));
+    } catch (error) {
+      console.error("Error removing stopwatch from Firestore:", error);
+      alert("Failed to remove stopwatch: " + error.message);
+    }
   };
 
   const updateLocalStopwatchTime = (id, time) => {
@@ -342,6 +357,7 @@ const Home = () => {
     <div>
     <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
       <Navbar />
+      {isLoading && <LoadingSpinner />}
       <div style={{ padding: "20px 0", marginTop:"40px", marginLeft: window.innerWidth > 768 ? "50px" : "0"}}>
         <div style={{ fontSize: "16px", color: "#4a5568", textAlign: "center", marginBottom: "24px" }}>
           Welcome, {userInfo.displayName ? userInfo.displayName : userInfo.email}!
