@@ -8,7 +8,6 @@ import Habits from './pages/Habits'
 import Expenses from "./pages/Expenses"
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
@@ -21,7 +20,6 @@ function App() {
       <Route path="/tasks" element={<Tasks />} />
       <Route path="/habits" element={<Habits />} />
       <Route path="/expenses" element={<Expenses />} />
-     {/* <Route path="/LoginTracker" element={<LoginTracker />} /> */}
     
      
      

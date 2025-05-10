@@ -87,7 +87,7 @@ const Home = () => {
         console.warn("No user authenticated after retries");
         setIsLoading(false);
         setError("Please log in to view the dashboard.");
-        navigate("/login");
+        navigate("/");
       }
     };
 
