@@ -2,7 +2,7 @@
 .navbar-top {
     background-color: #3182CE;
     color: white;
-    padding: 16px 24px; /* Increased vertical and horizontal padding */
+    padding: 16px 24px;
     height: 64px;
     display: flex;
     align-items: center;
@@ -12,19 +12,31 @@
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000; 
+    z-index: 1000;
   }
   
+  /* Profile photo */
+  .navbar-profile-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid white;
+    min-width: 40px; /* Prevent collapse */
+  }
   
+  /* Brand */
   .navbar-brand {
     margin: 0;
     font-size: 24px;
+    flex: 1;
     text-align: center;
-    flex: 1; /* Take full width to allow centering */
   }
   @media (min-width: 769px) {
     .navbar-brand {
-      display: none;
+      flex: 0; /* Minimize space on desktop */
+      visibility: hidden; /* Keep layout stable */
     }
   }
   
@@ -36,6 +48,7 @@
     color: white;
     font-size: 24px;
     cursor: pointer;
+    min-width: 40px; /* Match profile photo width */
   }
   
   /* Sidebar */
@@ -49,11 +62,9 @@
     box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
     z-index: 1000;
-  
     display: flex;
     flex-direction: column;
-  
-    transform: translateX(0); /* Always visible on desktop */
+    transform: translateX(0);
   }
   
   /* Sidebar header */
@@ -128,4 +139,3 @@
       transform: translateX(0);
     }
   }
-  

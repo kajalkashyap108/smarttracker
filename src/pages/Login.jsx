@@ -40,7 +40,7 @@ const Login = () => {
         lastLogin: new Date()
       });
       
-      console.log("User registered successfully!");
+      alert("User registered successfully!");
       setIsModalOpen(false); // Close the modal
       setRegisterEmail(""); // Clear modal inputs
       setRegisterPassword("");
@@ -252,7 +252,7 @@ const styles = {
   },
   buttonGroup: {
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     marginTop: "16px",
   },
   loginButton: {

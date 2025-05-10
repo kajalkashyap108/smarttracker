@@ -6,11 +6,28 @@ import "./Navbar.css";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [photoURL, setPhotoURL] = useState("https://via.placeholder.com/40");
+  const [isPhotoLoading, setIsPhotoLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const sidebarRef = useRef(null);
 
+  // Hide sidebar on /login
   const isLoginPage = location.pathname === "/";
+
+  // Fetch user photoURL
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user && user.photoURL) {
+        setPhotoURL(user.photoURL);
+      } else {
+        setPhotoURL("https://via.placeholder.com/40");
+      }
+      setIsPhotoLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -54,6 +71,15 @@ const Navbar = () => {
           </button>
         )}
         <h1 className="navbar-brand">SmartTracker</h1>
+        {!isLoginPage && !isPhotoLoading && (
+          <img
+            src={photoURL}
+            alt="Profile"
+            className="navbar-profile-photo"
+            onClick={() => navigate("/profile")}
+            onError={(e) => (e.target.src = "https://via.placeholder.com/40")}
+          />
+        )}
       </div>
 
       {!isLoginPage && (
@@ -67,7 +93,7 @@ const Navbar = () => {
 
           <ul className="navbar-menu">
             <li>
-            <button onClick={() => navigate("/home")}>Home</button>
+              <button onClick={() => navigate("/home")}>Home</button>
             </li>
             <li>
               <button onClick={() => navigate("/tasks")}>Tasks</button>

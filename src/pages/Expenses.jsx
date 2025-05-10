@@ -17,7 +17,16 @@ const Expenses = () => {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
       const snapshot = await getDocs(collection(db, `users/${userId}/expenses`));
-      setExpenses(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setExpenses(
+        snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            date: data.date?.toDate ? data.date.toDate() : new Date(data.date), // Convert Timestamp to Date
+          };
+        })
+      );
     };
     fetchExpenses();
   }, []);
@@ -29,12 +38,12 @@ const Expenses = () => {
       const expenseData = {
         amount: parseFloat(amount),
         category,
-        date: new Date(date),
+        date: new Date(date), // Ensure date is stored as a Date object
         createdAt: new Date(),
       };
       if (editId) {
         await updateDoc(doc(db, `users/${userId}/expenses`, editId), expenseData);
-        setExpenses(expenses.map(e => (e.id === editId ? { id: editId, ...expenseData } : e)));
+        setExpenses(expenses.map((e) => (e.id === editId ? { id: editId, ...expenseData } : e)));
         setEditId(null);
       } else {
         const id = Date.now().toString();
@@ -54,7 +63,7 @@ const Expenses = () => {
     try {
       const userId = auth.currentUser.uid;
       await deleteDoc(doc(db, `users/${userId}/expenses`, id));
-      setExpenses(expenses.filter(e => e.id !== id));
+      setExpenses(expenses.filter((e) => e.id !== id));
     } catch (err) {
       setError(err.message);
     }
@@ -63,7 +72,8 @@ const Expenses = () => {
   const editExpense = (expense) => {
     setAmount(expense.amount.toString());
     setCategory(expense.category);
-    setDate(expense.date.toISOString().split("T")[0]);
+    // Ensure the date is formatted correctly for the input field
+    setDate(expense.date instanceof Date ? expense.date.toISOString().split("T")[0] : "");
     setEditId(expense.id);
   };
 
@@ -101,6 +111,7 @@ const Expenses = () => {
           </div>
           <div style={styles.formGroup}>
             <label htmlFor="date">Date:</label>
+
             <input
               type="date"
               id="date"
@@ -116,10 +127,14 @@ const Expenses = () => {
           </button>
         </form>
         <ul style={styles.list}>
-          {expenses.map(expense => (
+          {expenses.map((expense) => (
             <li key={expense.id} style={styles.listItem}>
               <span>
-                ${expense.amount.toFixed(2)} - {expense.category} ({new Date(expense.date).toLocaleDateString()})
+                ${expense.amount.toFixed(2)} - {expense.category} (
+                {expense.date instanceof Date && !isNaN(expense.date)
+                  ? expense.date.toLocaleDateString()
+                  : "Invalid Date"}
+                )
               </span>
               <div>
                 <button onClick={() => editExpense(expense)} style={styles.actionButton}>
@@ -143,72 +158,95 @@ const styles = {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
+    backgroundColor: "#f9fafb",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
   container: {
     flex: 1,
-    padding: "16px",
+    padding: "24px",
     maxWidth: "800px",
     margin: "0 auto",
+    backgroundColor: "#ffffff",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
   },
   heading: {
     textAlign: "center",
-    marginBottom: "24px",
+    marginBottom: "32px",
+    fontSize: "24px",
+    fontWeight: "600",
+    color: "#2d3748",
   },
   form: {
     display: "flex",
     flexDirection: "column",
-    marginBottom: "24px",
+    marginBottom: "32px",
+    gap: "20px",
   },
   formGroup: {
-    marginBottom: "16px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
   },
   input: {
     width: "100%",
-    padding: "8px",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    boxSizing: "border-box",
+    padding: "10px 12px",
+    borderRadius: "8px",
+    border: "1px solid #cbd5e0",
+    fontSize: "16px",
+    outline: "none",
+    transition: "border-color 0.2s",
   },
   error: {
-    color: "red",
-    margin: "8px 0",
+    color: "#e53e3e",
+    fontSize: "14px",
+    marginTop: "-8px",
   },
   submitButton: {
-    padding: "8px 16px",
-    backgroundColor: "#38A169",
-    color: "white",
+    padding: "12px 20px",
+    backgroundColor: "#38a169",
+    color: "#fff",
+    fontSize: "16px",
+    fontWeight: "500",
     border: "none",
-    borderRadius: "5px",
+    borderRadius: "8px",
     cursor: "pointer",
+    transition: "background-color 0.2s",
   },
   list: {
     listStyle: "none",
     padding: 0,
+    marginTop: "16px",
   },
   listItem: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "8px",
-    borderBottom: "1px solid #ccc",
+    padding: "12px",
+    backgroundColor: "#edf2f7",
+    borderRadius: "8px",
+    marginBottom: "12px",
   },
   actionButton: {
-    padding: "6px 12px",
-    backgroundColor: "#3182CE",
-    color: "white",
+    padding: "8px 14px",
+    backgroundColor: "#3182ce",
+    color: "#fff",
     border: "none",
-    borderRadius: "5px",
+    borderRadius: "6px",
     cursor: "pointer",
-    marginLeft: "8px",
+    fontSize: "14px",
+    transition: "background-color 0.2s",
   },
   deleteButton: {
-    padding: "6px 12px",
-    backgroundColor: "#E53E3E",
-    color: "white",
+    padding: "8px 14px",
+    backgroundColor: "#e53e3e",
+    color: "#fff",
     border: "none",
-    borderRadius: "5px",
+    borderRadius: "6px",
     cursor: "pointer",
+    fontSize: "14px",
     marginLeft: "8px",
+    transition: "background-color 0.2s",
   },
 };
 

@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import Tasks from "./pages/Tasks"
 import Habits from './pages/Habits'
 import Expenses from "./pages/Expenses"
+import Profile from "./pages/Profile";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
       <Route path="/tasks" element={<Tasks />} />
       <Route path="/habits" element={<Habits />} />
       <Route path="/expenses" element={<Expenses />} />
+      <Route path="/profile" element={<Profile />} />
     
      
      

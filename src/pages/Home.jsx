@@ -6,6 +6,9 @@ import { Pie, Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import Stopwatch from "../component/Stopwatch";
+import './Home.css';
+
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -15,6 +18,7 @@ const Home = () => {
   const [expenseStats, setExpenseStats] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userInfo, setUserInfo] = useState({ email: "", displayName: "" }); // New state for user info
   const navigate = useNavigate();
 
   const fetchData = useCallback(async (userId) => {
@@ -78,6 +82,11 @@ const Home = () => {
       const user = auth.currentUser;
       if (user) {
         console.log("User authenticated:", user.uid);
+        // Set user info (email and displayName)
+        setUserInfo({
+          email: user.email || "User",
+          displayName: user.displayName || "",
+        });
         fetchData(user.uid);
       } else if (retryCount < maxRetries) {
         console.log("User not yet authenticated, retrying...", retryCount + 1);
@@ -95,6 +104,11 @@ const Home = () => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         console.log("Auth state changed, user:", user.uid);
+        // Update user info on auth state change
+        setUserInfo({
+          email: user.email || "User",
+          displayName: user.displayName || "",
+        });
         fetchData(user.uid);
       } else if (retryCount < maxRetries) {
         console.log("Auth state not ready, scheduling retry...");
@@ -151,114 +165,52 @@ const Home = () => {
   };
 
   return (
-    <div style={styles.page}>
+    <div className="page">
       <Navbar />
-      <div style={styles.container}>
-        <h2 style={styles.heading}>SmartTracker Dashboard</h2>
+      <div className="container">
+        <h2 className="heading">SmartTracker Dashboard</h2>
+        <div className="welcomeMessage">
+  Welcome, {userInfo.displayName ? userInfo.displayName : userInfo.email}!
+</div>
+         <div className="stopwatchWrapper">
+              <Stopwatch />
+            </div>
         {isLoading ? (
-          <div style={styles.loading}>Loading data, please wait...</div>
+          <div className="loading">Loading data, please wait...</div>
         ) : error ? (
-          <div style={styles.error}>{error}</div>
+          <div className="error">{error}</div>
         ) : (
-          <div style={styles.charts}>
-            <div style={styles.chartContainer}>
+          <div className="charts">
+           
+            <div className="chartContainer">
               <h3>Task Progress</h3>
-              <div style={styles.chartWrapper}>
+              <div className="chartWrapper">
                 <Pie data={taskChartData} options={chartOptions} />
               </div>
             </div>
-            <div style={styles.chartContainer}>
-              <h3>Habit Streaks</h3>
-              <div style={styles.chartWrapper}>
-                <Bar data={habitChartData} options={chartOptions} />
-              </div>
-            </div>
-            <div style={styles.chartContainer}>
+
+            <div className="chartContainer">
               <h3>Expense Breakdown</h3>
-              <div style={styles.chartWrapper}>
+              <div className="chartWrapper">
                 <Doughnut data={expenseChartData} options={chartOptions} />
               </div>
             </div>
+            <div className="chartContainer">
+              <h3>Habit Streaks</h3>
+              <div className="chartWrapper">
+                <Bar data={habitChartData} options={chartOptions} />
+              </div>
+            </div>
+
+
           </div>
         )}
       </div>
       <Footer />
     </div>
+
   );
 };
 
-const styles = {
-  page: {
-    display: "flex",
-    flexDirection: "column",
-    minHeight: "100vh",
-    boxSizing: "border-box",
-  },
-  container: {
-    flex: 1,
-    padding: "16px",
-    maxWidth: "1200px",
-    margin: "0 auto",
-    boxSizing: "border-box",
-  },
-  heading: {
-    textAlign: "center",
-    marginBottom: "24px",
-  },
-  cards: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-    gap: "16px",
-    marginBottom: "32px",
-  },
-  card: {
-    padding: "16px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-    backgroundColor: "white",
-    textAlign: "center",
-  },
-  cardButton: {
-    padding: "8px 16px",
-    backgroundColor: "#3182CE",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  charts: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-    gap: "16px",
-  },
-  chartContainer: {
-    padding: "16px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-    backgroundColor: "white",
-    textAlign: "center",
-    maxHeight: "400px",
-    overflow: "hidden",
-    boxSizing: "border-box",
-  },
-  chartWrapper: {
-    position: "relative",
-    height: "250px",
-    width: "100%",
-    maxWidth: "350px",
-    margin: "0 auto",
-  },
-  loading: {
-    textAlign: "center",
-    padding: "20px",
-    fontSize: "18px",
-  },
-  error: {
-    textAlign: "center",
-    padding: "20px",
-    color: "red",
-    fontSize: "18px",
-  },
-};
 
 export default Home;
