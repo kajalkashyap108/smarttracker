@@ -3,7 +3,6 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthP
 import { auth, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import tracker from '../assets/SmartTracker.png';
 import Footer from "../component/Footer";
 import Navbar from "../component/Navbar";
 
@@ -75,10 +74,7 @@ const Login = () => {
     <div style={styles.page}>
       <Navbar />
       <div style={styles.container}>
-        {/* Left Section with Image */}
-        <div style={styles.imageSection}>
-          <img src={tracker} alt="photo" style={styles.image} />
-        </div>
+      
 
         {/* Right Section with Login Form */}
         <div style={styles.formSection}>
