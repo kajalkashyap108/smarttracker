@@ -3,25 +3,35 @@ import { auth, db } from "../firebase";
 import { collection, getDocs, setDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const Habits = () => {
   const [habits, setHabits] = useState([]);
   const [name, setName] = useState("");
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchHabits = async () => {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
-      const snapshot = await getDocs(collection(db, `users/${userId}/habits`));
-      setHabits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setIsLoading(true);
+      try {
+        const snapshot = await getDocs(collection(db, `users/${userId}/habits`));
+        setHabits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchHabits();
   }, []);
 
   const addOrUpdateHabit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const userId = auth.currentUser.uid;
       const habitData = {
@@ -43,16 +53,21 @@ const Habits = () => {
       setError(null);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const deleteHabit = async (id) => {
+    setIsLoading(true);
     try {
       const userId = auth.currentUser.uid;
       await deleteDoc(doc(db, `users/${userId}/habits`, id));
       setHabits(habits.filter(h => h.id !== id));
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,6 +77,7 @@ const Habits = () => {
   };
 
   const markHabitDone = async (id) => {
+    setIsLoading(true);
     try {
       const userId = auth.currentUser.uid;
       const habit = habits.find(h => h.id === id);
@@ -78,50 +94,57 @@ const Habits = () => {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div style={styles.page}>
       <Navbar />
+      {isLoading && <LoadingSpinner />}
       <div style={styles.container}>
-        <h2 style={styles.heading}>{editId ? "Edit Habit" : "Manage Habits"}</h2>
-        <form onSubmit={addOrUpdateHabit} style={styles.form}>
-          <div style={styles.formGroup}>
-            <label htmlFor="name">Habit Name:</label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              style={styles.input}
-              placeholder="Enter habit name"
-            />
-          </div>
-          {error && <p style={styles.error}>{error}</p>}
-          <button type="submit" style={styles.submitButton}>
-            {editId ? "Update Habit" : "Add Habit"}
-          </button>
-        </form>
-        <ul style={styles.list}>
-          {habits.map(habit => (
-            <li key={habit.id} style={styles.listItem}>
-              <span>{habit.name} (Streak: {habit.streak || 0})</span>
-              <div>
-                <button onClick={() => markHabitDone(habit.id)} style={styles.actionButton}>
-                  Mark Done
-                </button>
-                <button onClick={() => editHabit(habit)} style={styles.actionButton}>
-                  Edit
-                </button>
-                <button onClick={() => deleteHabit(habit.id)} style={styles.deleteButton}>
-                  Delete
-                </button>
+        {isLoading ? null : (
+          <>
+            <h2 style={styles.heading}>{editId ? "Edit Habit" : "Manage Habits"}</h2>
+            <form onSubmit={addOrUpdateHabit} style={styles.form}>
+              <div style={styles.formGroup}>
+                <label htmlFor="name">Habit Name:</label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  style={styles.input}
+                  placeholder="Enter habit name"
+                />
               </div>
-            </li>
-          ))}
-        </ul>
+              {error && <p style={styles.error}>{error}</p>}
+              <button type="submit" style={styles.submitButton}>
+                {editId ? "Update Habit" : "Add Habit"}
+              </button>
+            </form>
+            <ul style={styles.list}>
+              {habits.map(habit => (
+                <li key={habit.id} style={styles.listItem}>
+                  <span>{habit.name} (Streak: {habit.streak || 0})</span>
+                  <div>
+                    <button onClick={() => markHabitDone(habit.id)} style={styles.actionButton}>
+                      Mark Done
+                    </button>
+                    <button onClick={() => editHabit(habit)} style={styles.actionButton}>
+                      Edit
+                    </button>
+                    <button onClick={() => deleteHabit(habit.id)} style={styles.deleteButton}>
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
       <Footer />
     </div>
@@ -222,4 +245,5 @@ const styles = {
     transition: "background-color 0.2s",
   },
 };
+
 export default Habits;

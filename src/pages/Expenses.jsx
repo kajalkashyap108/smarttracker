@@ -3,6 +3,7 @@ import { auth, db } from "../firebase";
 import { collection, getDocs, setDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
@@ -11,28 +12,37 @@ const Expenses = () => {
   const [date, setDate] = useState("");
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchExpenses = async () => {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
-      const snapshot = await getDocs(collection(db, `users/${userId}/expenses`));
-      setExpenses(
-        snapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            date: data.date?.toDate ? data.date.toDate() : new Date(data.date), // Convert Timestamp to Date
-          };
-        })
-      );
+      setIsLoading(true);
+      try {
+        const snapshot = await getDocs(collection(db, `users/${userId}/expenses`));
+        setExpenses(
+          snapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              ...data,
+              date: data.date?.toDate ? data.date.toDate() : new Date(data.date), // Convert Timestamp to Date
+            };
+          })
+        );
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchExpenses();
   }, []);
 
   const addOrUpdateExpense = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const userId = auth.currentUser.uid;
       const expenseData = {
@@ -56,16 +66,21 @@ const Expenses = () => {
       setError(null);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const deleteExpense = async (id) => {
+    setIsLoading(true);
     try {
       const userId = auth.currentUser.uid;
       await deleteDoc(doc(db, `users/${userId}/expenses`, id));
       setExpenses(expenses.filter((e) => e.id !== id));
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,73 +95,77 @@ const Expenses = () => {
   return (
     <div style={styles.page}>
       <Navbar />
+      {isLoading && <LoadingSpinner />}
       <div style={styles.container}>
-        <h2 style={styles.heading}>{editId ? "Edit Expense" : "Manage Expenses"}</h2>
-        <form onSubmit={addOrUpdateExpense} style={styles.form}>
-          <div style={styles.formGroup}>
-            <label htmlFor="amount">Amount:</label>
-            <input
-              type="number"
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-              style={styles.input}
-              placeholder="Enter amount"
-            />
-          </div>
-          <div style={styles.formGroup}>
-            <label htmlFor="category">Category:</label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              style={styles.input}
-            >
-              <option value="Food">Food</option>
-              <option value="Travel">Travel</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div style={styles.formGroup}>
-            <label htmlFor="date">Date:</label>
-
-            <input
-              type="date"
-              id="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-              style={styles.input}
-            />
-          </div>
-          {error && <p style={styles.error}>{error}</p>}
-          <button type="submit" style={styles.submitButton}>
-            {editId ? "Update Expense" : "Add Expense"}
-          </button>
-        </form>
-        <ul style={styles.list}>
-          {expenses.map((expense) => (
-            <li key={expense.id} style={styles.listItem}>
-              <span>
-                ${expense.amount.toFixed(2)} - {expense.category} (
-                {expense.date instanceof Date && !isNaN(expense.date)
-                  ? expense.date.toLocaleDateString()
-                  : "Invalid Date"}
-                )
-              </span>
-              <div>
-                <button onClick={() => editExpense(expense)} style={styles.actionButton}>
-                  Edit
-                </button>
-                <button onClick={() => deleteExpense(expense.id)} style={styles.deleteButton}>
-                  Delete
-                </button>
+        {isLoading ? null : (
+          <>
+            <h2 style={styles.heading}>{editId ? "Edit Expense" : "Manage Expenses"}</h2>
+            <form onSubmit={addOrUpdateExpense} style={styles.form}>
+              <div style={styles.formGroup}>
+                <label htmlFor="amount">Amount:</label>
+                <input
+                  type="number"
+                  id="amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  required
+                  style={styles.input}
+                  placeholder="Enter amount"
+                />
               </div>
-            </li>
-          ))}
-        </ul>
+              <div style={styles.formGroup}>
+                <label htmlFor="category">Category:</label>
+                <select
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  style={styles.input}
+                >
+                  <option value="Food">Food</option>
+                  <option value="Travel">Travel</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div style={styles.formGroup}>
+                <label htmlFor="date">Date:</label>
+                <input
+                  type="date"
+                  id="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  required
+                  style={styles.input}
+                />
+              </div>
+              {error && <p style={styles.error}>{error}</p>}
+              <button type="submit" style={styles.submitButton}>
+                {editId ? "Update Expense" : "Add Expense"}
+              </button>
+            </form>
+            <ul style={styles.list}>
+              {expenses.map((expense) => (
+                <li key={expense.id} style={styles.listItem}>
+                  <span>
+                    ${expense.amount.toFixed(2)} - {expense.category} (
+                    {expense.date instanceof Date && !isNaN(expense.date)
+                      ? expense.date.toLocaleDateString()
+                      : "Invalid Date"}
+                    )
+                  </span>
+                  <div>
+                    <button onClick={() => editExpense(expense)} style={styles.actionButton}>
+                      Edit
+                    </button>
+                    <button onClick={() => deleteExpense(expense.id)} style={styles.deleteButton}>
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
       <Footer />
     </div>

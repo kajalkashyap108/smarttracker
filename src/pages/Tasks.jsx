@@ -3,6 +3,7 @@ import { auth, db } from "../firebase";
 import { collection, getDocs, setDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import LoadingSpinner from "../component/LoadingSpinner";
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -10,19 +11,28 @@ const Tasks = () => {
   const [category, setCategory] = useState("Work");
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchTasks = async () => {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
-      const snapshot = await getDocs(collection(db, `users/${userId}/tasks`));
-      setTasks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setIsLoading(true);
+      try {
+        const snapshot = await getDocs(collection(db, `users/${userId}/tasks`));
+        setTasks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchTasks();
   }, []);
 
   const addOrUpdateTask = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const userId = auth.currentUser.uid;
       const taskData = {
@@ -45,16 +55,21 @@ const Tasks = () => {
       setError(null);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const deleteTask = async (id) => {
+    setIsLoading(true);
     try {
       const userId = auth.currentUser.uid;
       await deleteDoc(doc(db, `users/${userId}/tasks`, id));
       setTasks(tasks.filter(t => t.id !== id));
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,6 +80,7 @@ const Tasks = () => {
   };
 
   const toggleStatus = async (id, currentStatus) => {
+    setIsLoading(true);
     try {
       const userId = auth.currentUser.uid;
       const newStatus = currentStatus === "completed" ? "pending" : "completed";
@@ -72,66 +88,73 @@ const Tasks = () => {
       setTasks(tasks.map(t => (t.id === id ? { ...t, status: newStatus } : t)));
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div style={styles.page}>
       <Navbar />
+      {isLoading && <LoadingSpinner />}
       <div style={styles.container}>
-        <h2 style={styles.heading}>{editId ? "Edit Task" : "Manage Tasks"}</h2>
-        <form onSubmit={addOrUpdateTask} style={styles.form}>
-          <div style={styles.formGroup}>
-            <label htmlFor="title">Title:</label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              style={styles.input}
-              placeholder="Enter task title"
-            />
-          </div>
-          <div style={styles.formGroup}>
-            <label htmlFor="category">Category:</label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              style={styles.input}
-            >
-              <option value="Work">Work</option>
-              <option value="Personal">Personal</option>
-              <option value="Fitness">Fitness</option>
-            </select>
-          </div>
-          {error && <p style={styles.error}>{error}</p>}
-          <button type="submit" style={styles.submitButton}>
-            {editId ? "Update Task" : "Add Task"}
-          </button>
-        </form>
-        <ul style={styles.list}>
-          {tasks.map(task => (
-            <li key={task.id} style={styles.listItem}>
-              <span>{task.title} ({task.category}) - {task.status}</span>
-              <div>
-                <button
-                  onClick={() => toggleStatus(task.id, task.status)}
-                  style={styles.actionButton}
-                >
-                  {task.status === "completed" ? "Mark Pending" : "Mark Completed"}
-                </button>
-                <button onClick={() => editTask(task)} style={styles.actionButton}>
-                  Edit
-                </button>
-                <button onClick={() => deleteTask(task.id)} style={styles.deleteButton}>
-                  Delete
-                </button>
+        {isLoading ? null : (
+          <>
+            <h2 style={styles.heading}>{editId ? "Edit Task" : "Manage Tasks"}</h2>
+            <form onSubmit={addOrUpdateTask} style={styles.form}>
+              <div style={styles.formGroup}>
+                <label htmlFor="title">Title:</label>
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  style={styles.input}
+                  placeholder="Enter task title"
+                />
               </div>
-            </li>
-          ))}
-        </ul>
+              <div style={styles.formGroup}>
+                <label htmlFor="category">Category:</label>
+                <select
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  style={styles.input}
+                >
+                  <option value="Work">Work</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Fitness">Fitness</option>
+                </select>
+              </div>
+              {error && <p style={styles.error}>{error}</p>}
+              <button type="submit" style={styles.submitButton}>
+                {editId ? "Update Task" : "Add Task"}
+              </button>
+            </form>
+            <ul style={styles.list}>
+              {tasks.map(task => (
+                <li key={task.id} style={styles.listItem}>
+                  <span>{task.title} ({task.category}) - {task.status}</span>
+                  <div>
+                    <button
+                      onClick={() => toggleStatus(task.id, task.status)}
+                      style={styles.actionButton}
+                    >
+                      {task.status === "completed" ? "Mark Pending" : "Mark Completed"}
+                    </button>
+                    <button onClick={() => editTask(task)} style={styles.actionButton}>
+                      Edit
+                    </button>
+                    <button onClick={() => deleteTask(task.id)} style={styles.deleteButton}>
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
       <Footer />
     </div>
@@ -232,7 +255,5 @@ const styles = {
     transition: "background-color 0.3s",
   },
 };
-
-
 
 export default Tasks;
