@@ -3,9 +3,12 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthP
 import { auth, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { MdLogin, MdPersonAdd, MdClose } from "react-icons/md";
+import { FcGoogle } from "react-icons/fc";
 import Footer from "../component/Footer";
 import Navbar from "../component/Navbar";
 import loginImage from "../assets/loginimage.svg";
+import { color } from "chart.js/helpers";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -115,14 +118,14 @@ const Login = () => {
                   type="submit" 
                   style={styles.loginButton}
                 >
-                  Login
+                  <MdLogin style={styles.buttonIcon} /> Login
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(true)}
                   style={styles.registerButton}
                 >
-                  Register
+                  <MdPersonAdd style={styles.buttonIcon} /> Register
                 </button>
               </div>
             </form>
@@ -131,7 +134,7 @@ const Login = () => {
                 onClick={handleGoogleLogin}
                 style={styles.googleButton}
               >
-                Sign in with Google
+                <FcGoogle style={styles.buttonIcon} /> Sign in with Google
               </button>
             </div>
           </div>
@@ -147,7 +150,7 @@ const Login = () => {
               onClick={() => setIsModalOpen(false)}
               style={styles.closeButton}
             >
-              ×
+              <MdClose style={{ fontSize: '24px' }} />
             </button>
             <form onSubmit={handleRegister} style={styles.modalForm}>
               <div style={styles.formGroup}>
@@ -180,14 +183,14 @@ const Login = () => {
                   type="submit"
                   style={styles.submitButton}
                 >
-                  Register
+                  <MdPersonAdd style={styles.buttonIcon} /> Register
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   style={styles.cancelButton}
                 >
-                  Cancel
+                  <MdClose style={styles.buttonIcon} /> Cancel
                 </button>
               </div>
             </form>
@@ -222,9 +225,6 @@ const styles = {
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    '@media (min-width: 768px)': {
-      display: 'none',
-    }
   },
   image: {
     width: '75%',
@@ -237,9 +237,6 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '16px',
-    '@media (min-width: 768px)': {
-      width: '50%'
-    }
   },
   formContainer: {
     width: '100%',
@@ -262,7 +259,7 @@ const styles = {
     gap: '16px'
   },
   formGroup: {
-    display:"flex",
+    display: "flex",
     flexDirection: 'column',
     gap: '8px'
   },
@@ -295,9 +292,10 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    ':hover': {
-      backgroundColor: '#ec4899'
-    }
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
   },
   registerButton: {
     flex: 1,
@@ -307,9 +305,10 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    ':hover': {
-      backgroundColor: '#15803d'
-    }
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
   },
   googleButtonContainer: {
     marginTop: '16px'
@@ -317,14 +316,16 @@ const styles = {
   googleButton: {
     width: '100%',
     padding: '8px',
-    backgroundColor: '#2563eb',
-    color: 'white',
-    border: 'none',
+    backgroundColor: '#ffffff',
+    color: '#000000',
+    border: '1px solid #000000',
     borderRadius: '4px',
     cursor: 'pointer',
-    ':hover': {
-      backgroundColor: '#1d4ed8'
-    }
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
   },
   modalOverlay: {
     position: 'fixed',
@@ -358,8 +359,10 @@ const styles = {
     right: '8px',
     background: 'none',
     border: 'none',
-    fontSize: '24px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   modalForm: {
     display: 'flex',
@@ -379,9 +382,10 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    ':hover': {
-      backgroundColor: '#1d4ed8'
-    }
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
   },
   cancelButton: {
     flex: 1,
@@ -391,9 +395,13 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    ':hover': {
-      backgroundColor: '#b91c1c'
-    }
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+  },
+  buttonIcon: {
+    fontSize: '18px'
   }
 };
 
