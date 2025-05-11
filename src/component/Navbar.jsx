@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
+import { FaHome, FaTasks, FaCheckCircle, FaWallet } from "react-icons/fa";
 import "./Navbar.css";
 
 const Navbar = () => {
@@ -93,16 +94,24 @@ const Navbar = () => {
 
           <ul className="navbar-menu">
             <li>
-              <button onClick={() => navigate("/home")}>Home</button>
+              <button onClick={() => navigate("/home")}>
+                <FaHome className="menu-icon" /> Home
+              </button>
             </li>
             <li>
-              <button onClick={() => navigate("/tasks")}>Tasks</button>
+              <button onClick={() => navigate("/tasks")}>
+                <FaTasks className="menu-icon" /> Tasks
+              </button>
             </li>
             <li>
-              <button onClick={() => navigate("/habits")}>Habits</button>
+              <button onClick={() => navigate("/habits")}>
+                <FaCheckCircle className="menu-icon" /> Habits
+              </button>
             </li>
             <li>
-              <button onClick={() => navigate("/expenses")}>Expenses</button>
+              <button onClick={() => navigate("/expenses")}>
+                <FaWallet className="menu-icon" /> Expenses
+              </button>
             </li>
           </ul>
 

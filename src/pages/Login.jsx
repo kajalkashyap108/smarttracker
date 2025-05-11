@@ -5,6 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Footer from "../component/Footer";
 import Navbar from "../component/Navbar";
+import loginImage from "../assets/loginimage.svg";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -33,7 +34,6 @@ const Login = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
       const user = userCredential.user;
       
-      // Store user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         createdAt: new Date(),
@@ -41,10 +41,10 @@ const Login = () => {
       });
       
       alert("User registered successfully!");
-      setIsModalOpen(false); // Close the modal
-      setRegisterEmail(""); // Clear modal inputs
+      setIsModalOpen(false);
+      setRegisterEmail("");
       setRegisterPassword("");
-      setError(null); // Clear any previous errors
+      setError(null);
     } catch (err) {
       setError(err.message);
     }
@@ -55,7 +55,6 @@ const Login = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       
-      // Store Google user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         displayName: user.displayName,
@@ -74,16 +73,22 @@ const Login = () => {
     <div style={styles.page}>
       <Navbar />
       <div style={styles.container}>
-      
+        {/* Image Section */}
+        <div style={styles.imageSection}>
+          <img 
+            src={loginImage} 
+            alt="Login Illustration" 
+            style={styles.image}
+          />
+        </div>
 
-        {/* Right Section with Login Form */}
+        {/* Form Section */}
         <div style={styles.formSection}>
           <div style={styles.formContainer}>
             <h2 style={styles.heading}>Login</h2>
             <form onSubmit={handleLogin} style={styles.form}>
-              <div abortion
-                style={styles.formGroup}>
-                <label htmlFor="email">Email:</label>
+              <div style={styles.formGroup}>
+                <label htmlFor="email" style={styles.label}>Email:</label>
                 <input
                   type="email"
                   id="email"
@@ -94,7 +99,7 @@ const Login = () => {
                 />
               </div>
               <div style={styles.formGroup}>
-                <label htmlFor="password">Password:</label>
+                <label htmlFor="password" style={styles.label}>Password:</label>
                 <input
                   type="password"
                   id="password"
@@ -106,7 +111,12 @@ const Login = () => {
               </div>
               {error && <p style={styles.error}>{error}</p>}
               <div style={styles.buttonGroup}>
-                <button type="submit" style={styles.loginButton}>Login</button>
+                <button 
+                  type="submit" 
+                  style={styles.loginButton}
+                >
+                  Login
+                </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(true)}
@@ -117,7 +127,10 @@ const Login = () => {
               </div>
             </form>
             <div style={styles.googleButtonContainer}>
-              <button onClick={handleGoogleLogin} style={styles.googleButton}>
+              <button 
+                onClick={handleGoogleLogin}
+                style={styles.googleButton}
+              >
                 Sign in with Google
               </button>
             </div>
@@ -138,32 +151,37 @@ const Login = () => {
             </button>
             <form onSubmit={handleRegister} style={styles.modalForm}>
               <div style={styles.formGroup}>
-                <label htmlFor="registerEmail">Email:</label>
+                <label htmlFor="registerEmail" style={styles.label}>Email:</label>
                 <input
                   type="email"
                   id="registerEmail"
                   value={registerEmail}
                   onChange={(e) => setRegisterEmail(e.target.value)}
                   required
-                  style={styles.input}
                   placeholder="Enter your email"
+                  style={styles.input}
                 />
               </div>
               <div style={styles.formGroup}>
-                <label htmlFor="registerPassword">Password:</label>
+                <label htmlFor="registerPassword" style={styles.label}>Password:</label>
                 <input
                   type="password"
                   id="registerPassword"
                   value={registerPassword}
                   onChange={(e) => setRegisterPassword(e.target.value)}
                   required
-                  style={styles.input}
                   placeholder="Enter your password"
+                  style={styles.input}
                 />
               </div>
               {error && <p style={styles.error}>{error}</p>}
               <div style={styles.modalButtonGroup}>
-                <button type="submit" style={styles.submitButton}>Submit</button>
+                <button 
+                  type="submit"
+                  style={styles.submitButton}
+                >
+                  Register
+                </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
@@ -182,165 +200,201 @@ const Login = () => {
   );
 };
 
-// Inline CSS styles
 const styles = {
   page: {
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: '#f0f4f8',
+    overflow: 'hidden'
   },
   container: {
     flex: 1,
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
   },
   imageSection: {
-    flex: 1,
-    display: "none",
+    display: window.innerWidth > 768 ? "flex" : "none",
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
     '@media (min-width: 768px)': {
-      display: "block",
-    },
+      display: 'none',
+    }
   },
   image: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
+    width: '75%',
+    height: '75%',
+    objectFit: 'contain'
   },
   formSection: {
-    flex: 1,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f4f8",
-    padding: "16px",
-    '@media (max-width: 767px)': {
-      flex: "none",
-    },
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '16px',
+    '@media (min-width: 768px)': {
+      width: '50%'
+    }
   },
   formContainer: {
-    width: "90%",
-    maxWidth: "400px",
-    padding: "30px",
-    borderRadius: "10px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-    backgroundColor: "white",
+    width: '100%',
+    maxWidth: '400px',
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    padding: '32px'
   },
   heading: {
-    textAlign: "center",
-    marginBottom: "20px",
-    textDecoration: "underline",
+    fontSize: '24px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: '24px',
+    textDecoration: 'underline'
   },
   form: {
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
   },
   formGroup: {
-    marginBottom: "16px",
+    display:"flex",
+    flexDirection: 'column',
+    gap: '8px'
+  },
+  label: {
+    fontSize: '14px',
+    fontWeight: '500'
   },
   input: {
-    width: "100%",
-    padding: "10px",
-    margin: "8px 0",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    boxSizing: "border-box",
+    width: '100%',
+    padding: '8px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    fontSize: '14px'
   },
   error: {
-    color: "red",
-    margin: "8px 0",
+    color: '#dc2626',
+    fontSize: '12px',
+    marginTop: '4px'
   },
   buttonGroup: {
-    display: "flex",
-    justifyContent: "space-around",
-    marginTop: "16px",
+    display: 'flex',
+    gap: '16px',
+    marginTop: '16px'
   },
   loginButton: {
-    padding: "10px 20px",
-    backgroundColor: "pink",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
+    flex: 1,
+    padding: '8px',
+    backgroundColor: '#f472b6',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    ':hover': {
+      backgroundColor: '#ec4899'
+    }
   },
   registerButton: {
-    padding: "10px 20px",
-    backgroundColor: "#38A169",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
+    flex: 1,
+    padding: '8px',
+    backgroundColor: '#16a34a',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    ':hover': {
+      backgroundColor: '#15803d'
+    }
   },
   googleButtonContainer: {
-    display: "flex",
-    justifyContent: "center",
-    marginTop: "16px",
+    marginTop: '16px'
   },
   googleButton: {
-    padding: "10px 20px",
-    backgroundColor: "#3182CE",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
+    width: '100%',
+    padding: '8px',
+    backgroundColor: '#2563eb',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    ':hover': {
+      backgroundColor: '#1d4ed8'
+    }
   },
   modalOverlay: {
-    position: "fixed",
+    position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000
   },
   modalContent: {
-    backgroundColor: "white",
-    padding: "20px",
-    borderRadius: "10px",
-    width: "90%",
-    maxWidth: "400px",
-    position: "relative",
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    padding: '24px',
+    width: '100%',
+    maxWidth: '400px',
+    position: 'relative'
   },
   modalHeader: {
-    margin: "0 0 20px 0",
-    textAlign: "center",
+    fontSize: '20px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: '16px'
   },
   closeButton: {
-    position: "absolute",
-    top: "10px",
-    right: "10px",
-    background: "none",
-    border: "none",
-    fontSize: "20px",
-    cursor: "pointer",
+    position: 'absolute',
+    top: '8px',
+    right: '8px',
+    background: 'none',
+    border: 'none',
+    fontSize: '24px',
+    cursor: 'pointer'
   },
   modalForm: {
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
   },
   modalButtonGroup: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "16px",
+    display: 'flex',
+    gap: '16px',
+    marginTop: '16px'
   },
   submitButton: {
-    padding: "10px 20px",
-    backgroundColor: "#3182CE",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
+    flex: 1,
+    padding: '8px',
+    backgroundColor: '#2563eb',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    ':hover': {
+      backgroundColor: '#1d4ed8'
+    }
   },
   cancelButton: {
-    padding: "10px 20px",
-    backgroundColor: "#E53E3E",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
+    flex: 1,
+    padding: '8px',
+    backgroundColor: '#dc2626',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    ':hover': {
+      backgroundColor: '#b91c1c'
+    }
+  }
 };
 
 export default Login;
