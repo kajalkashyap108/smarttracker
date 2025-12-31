@@ -2,17 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBRG3s2RVyXi5GTC-OorAAsbMlRKmQshEc",
-  authDomain: "smarttracker-f77dc.firebaseapp.com",
-  projectId: "smarttracker-f77dc",
-  storageBucket: "smarttracker-f77dc.firebasestorage.app",
-  messagingSenderId: "782371283945",
-  appId: "1:782371283945:web:c407bea00ad338db08e178",
-  measurementId: "G-JFK19EYKGD"
+  apiKey: "AIzaSyBFwB477uAjHAHCqCvwkxoGBprXoPVCya8",
+  authDomain: "tracker-2567e.firebaseapp.com",
+  projectId: "tracker-2567e",
+  storageBucket: "tracker-2567e.firebasestorage.app",
+  messagingSenderId: "248434786914",
+  appId: "1:248434786914:web:3f32cfe584edbd9753873b",
+  measurementId: "G-P66MW2MHMQ"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
